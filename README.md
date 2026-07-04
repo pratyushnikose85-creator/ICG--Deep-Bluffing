@@ -21,6 +21,59 @@ To ensure the mathematics remain discrete and the game-tree branching factors ar
 * **The Deck:** A standard 52-card deck.
 
 ---
+### **Crash Course: Game Sequence & Hand Rankings**
+If you have never played Texas Hold'em, here is the exact sequence of events and how to determine the winner.
+
+**The Street Sequence:**
+1. **Pre-Flop:** Players receive 2 private Hole Cards. (First betting round).
+2. **The Flop:** 3 public Community Cards are dealt face-up in the middle. (Second betting round).
+3. **The Turn:** 1 additional Community Card is dealt. (Third betting round).
+4. **The River:** 1 final Community Card is dealt. (Final betting round).
+5. **Showdown:** If neither player has folded, both reveal their hands.
+
+**Hand Rankings (From Strongest to Weakest):**
+Your bot must find the best possible 5-card hand out of the 7 available cards.
+1. **Royal Flush:** A, K, Q, J, 10 all of the same suit.
+2. **Straight Flush:** 5 consecutive cards of the same suit.
+3. **Four of a Kind (Quads):** 4 cards of the same rank.
+4. **Full House:** 3 of a kind PLUS a pair.
+5. **Flush:** Any 5 cards of the same suit (not consecutive).
+6. **Straight:** 5 consecutive cards of mixed suits.
+7. **Three of a Kind (Trips/Set):** 3 cards of the same rank.
+8. **Two Pair:** Two different pairs.
+9. **One Pair:** Two cards of the same rank.
+10. **High Card:** Highest single card wins.
+
+*Note on Ties (Kickers):* If both players have the same hand (e.g., both have a Pair of Aces), the winner is determined by the highest remaining cards in their 5-card hand, known as "kickers".
+
+### **Mechanical Rules**
+If you are new to poker, you must ensure your game engine implements these three specific mechanics correctly:
+
+**1. Action Definitions:**
+* **FOLD:** The player surrenders their cards and forfeits any chips they have put in the pot. The hand immediately ends, and the opponent wins the pot.
+* **CALL:** The player matches the current `amount_to_call` to stay in the hand. (If the `amount_to_call` is 0, this action is known as a "Check").
+* **RAISE:** The player puts in the `amount_to_call` PLUS the current fixed betting increment (Small Bet or Big Bet).
+
+**2. Heads-Up Turn Order (Engine Logic):**
+Heads-Up poker has a specific rule for who acts first, and the order flips after the first round:
+* **Pre-Flop:** The Small Blind (Dealer) acts **first**, and the Big Blind acts **second**.
+* **Post-Flop (Flop, Turn, River):** The Big Blind acts **first**, and the Small Blind (Dealer) acts **second**. 
+
+**3. Split Pots (Ties):**
+* If both players reach the showdown and have the exact same winning 5-card hand (including all tie-breaking kickers), it is a tie. The pot must be split evenly (50/50) between both players.
+
+### **Detailed Game Mechanics & Bankroll**
+To ensure all bots operate on a standardized mathematical state space, the tournament arena will enforce the following strict monetary and betting parameters:
+
+1. **Initial Bankroll (The Stack):** At the beginning of every individual hand, both players are reset to a fresh stack of exactly **100 Chips**. Stacks do not carry over across hands; each hand is an isolated episodic simulation.
+2. **The Forced Blinds:** 
+   * **Small Blind (SB):** 1 Chip (posted automatically by the Dealer/Button).
+   * **Big Blind (BB):** 2 Chips (posted automatically by the Non-Dealer).
+3. **Fixed-Limit Betting Structure (The Raise Value):**
+   You(mentees) **must not** define or choose the raise value. The arena dynamically enforces standard structured limit rules across the betting rounds:
+   * **Pre-Flop & Flop:** The betting increment is fixed to a **Small Bet of 2 Chips**. Any `RAISE` action adds exactly 2 chips to the current highest bet.
+   * **Turn & River:** The betting increment doubles to a **Big Bet of 4 Chips**. Any `RAISE` action adds exactly 4 chips to the current highest bet.
+4. **The Cap Rule:** To prevent infinite betting loops, each street is limited to a maximum of **4 total bets** (1 initial bet + 3 raises). Once the betting is capped, the only legal actions remaining for the players are `CALL` or `FOLD`.
 
 ### **Technical Constraints & Rules**
 This is a comprehensive test of pure algorithmic logic and clean software design. 
